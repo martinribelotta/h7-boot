@@ -93,7 +93,8 @@ LoopFillZerobss:
   bcc  FillZerobss
 
 /* Call static constructors */
-    bl __libc_init_array
+  bl __libc_init_array
+  bl __premain
 /* Call the application's entry point.*/
   bl  main
   bx  lr    
