@@ -1,0 +1,16 @@
+﻿---
+BasedOnStyle: LLVM
+AlignTrailingComments: 'true'
+AllowShortBlocksOnASingleLine: 'false'
+AllowShortFunctionsOnASingleLine: None
+BreakBeforeBraces: Linux
+ColumnLimit: '80'
+IndentWidth: '4'
+Language: Cpp
+MaxEmptyLinesToKeep: '1'
+PointerAlignment: Right
+SortIncludes: 'false'
+TabWidth: '4'
+UseTab: Never
+
+...
