@@ -106,6 +106,16 @@ SECTIONS
     . = ALIGN(4);
   } >FLASH
 
+  .shell_commands :
+  {
+    . = ALIGN(4);
+    __shell_commands_start = .;
+    KEEP(*(.shell_commands))
+    KEEP(*(.shell_commands*))
+    . = ALIGN(4);
+    __shell_commands_end = .;
+  } >FLASH
+
   .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >FLASH
   .ARM : {
     __exidx_start = .;

@@ -6,111 +6,14 @@
 #include "usb_host.h"
 #include "gpio.h"
 #include "qspi.h"
+#include "microrl.h"
+#include "shell.h"
 
 #include <time.h>
+#include <string.h>
 
 void SystemClock_Config(void);
 void MX_USB_HOST_Process(void);
-
-static void dumphex(const char *label, const uint8_t *ptr, size_t count)
-{
-    printf("%s:", label);
-    for (size_t i = 0; i < count; i++) {
-        if ((i % 16) == 0) {
-            printf("\n  %04X ", i);
-        }
-        printf("%02X ", ptr[i]);
-    }
-    printf("\n");
-}
-
-static void fillrand(uint8_t *buf, size_t count)
-{
-    while (count--)
-        *buf++ = rand();
-}
-
-static void testQSPI(void)
-{
-    static uint8_t buf[32];
-    static uint8_t buf2[32];
-    // Uses noinit section to RAM DFF initialization on every power cycle
-    static int seed __attribute__((section(".noinit")));
-    srand(seed);
-    seed = rand();
-
-    uint8_t st;
-    if (QSPI_GetStatus(&hqspi, &st) == QSPI_OK) {
-        printf("QSPI status: 0x%02X\n", st);
-    } else {
-        puts("QSPI fail on get status");
-    }
-
-    MX_QUADSPI_Erase(0, sizeof(buf));
-    fillrand(buf, sizeof(buf));
-    dumphex("write buffer", buf, sizeof(buf));
-    MX_QUADSPI_Write(buf, 0, sizeof(buf));
-    MX_QUADSPI_Read(buf2, 0, sizeof(buf2));
-    dumphex("read buffer", buf2, sizeof(buf2));
-    int d = memcmp(buf, buf2, sizeof(buf));
-    puts(d == 0 ? "Buffer equal" : "Buffer differ");
-}
-
-static void testuSD(void)
-{
-    static DIR dir;
-    printf("SD %s contents:\n", SDPath);
-    if (f_mount(&SDFatFS, SDPath, 1) != FR_OK) {
-        printf("Error mounting SD\r\n");
-        return;
-    }
-    if (f_opendir(&dir, SDPath) == FR_OK) {
-        static FILINFO inf;
-        while (f_readdir(&dir, &inf) == FR_OK) {
-            if (inf.fname[0] == 0)
-                break;
-            printf("  %s\r\n", inf.fname);
-        }
-    } else {
-        printf("Fail to open SD\r\n");
-    }
-    if (f_mount(NULL, SDPath, 1) != FR_OK) {
-        printf("Error unmounting SD\r\n");
-    }
-}
-
-static inline void delay(long loops)
-{
-    do
-        asm volatile("" ::: "memory");
-    while (--loops);
-}
-
-static unsigned long calcbogo(unsigned long loops)
-{
-    unsigned long ticks = HAL_GetTick();
-    delay(loops);
-    ticks = HAL_GetTick() - ticks;
-    if (ticks < CLOCKS_PER_SEC) {
-        return 0;
-    }
-    return loops * 1000ULL / ticks;
-}
-
-static void testBOGOMIPS(void)
-{
-    for (unsigned long loops=1 << 20; loops; loops<<=1) {
-        unsigned long lps = calcbogo(loops);
-        if (lps) {
-            unsigned long intPart = lps / 1000000;
-            unsigned long fracPart = lps % 1000000;
-            printf("Loops per sec: %lu - %lu.%02lu BogoMips\n",
-                   lps, intPart, fracPart);
-            return;
-        }
-    }
-    puts("Cannot calculate bogoMIPS");
-}
 
 void __premain(void)
 {
@@ -129,18 +32,46 @@ void __premain(void)
     // MX_USB_HOST_Init();
 }
 
+microrl_t mrl;
+
+int stdio_getchar(void)
+{
+    return LL_USART_IsActiveFlag_RXNE(USART1) ? LL_USART_ReceiveData8(USART1)
+                                              : -1;
+}
+
+void stdio_putchar(char c)
+{
+    while (!LL_USART_IsActiveFlag_TXE(USART1))
+        ;
+    LL_USART_TransmitData8(USART1, c);
+}
+
+static void microrl_print(const char *s)
+{
+    while (*s)
+        stdio_putchar(*s++);
+}
+
+static void print_sysinfo(void)
+{
+    static const char *const fake_argv[] = { "info" };
+    shell_execute(1, fake_argv);
+}
+
 int main(void)
 {
-    testQSPI();
-    testuSD();
-    testBOGOMIPS();
-    extern int core_main(void);
-    puts("Running coremark");
-    core_main();
-
+    print_sysinfo();
+    microrl_init(&mrl, microrl_print);
+    microrl_set_execute_callback(&mrl, shell_execute);
     while (1) {
         // MX_USB_HOST_Process();
-        __WFI();
+        if (LL_USART_IsActiveFlag_RXNE(USART1)) {
+            int c = LL_USART_ReceiveData8(USART1);
+            microrl_insert_char(&mrl, c);
+        } else {
+            __WFI();
+        }
     }
 }
 
@@ -207,19 +138,6 @@ void SystemClock_Config(void)
     LL_RCC_SetSDMMCClockSource(LL_RCC_SDMMC_CLKSOURCE_PLL1Q);
     LL_RCC_SetUSARTClockSource(LL_RCC_USART16_CLKSOURCE_PCLK2);
     LL_RCC_SetUSBClockSource(LL_RCC_USB_CLKSOURCE_PLL1Q);
-}
-
-int stdio_getchar(void)
-{
-    return LL_USART_IsActiveFlag_RXNE(USART1) ? LL_USART_ReceiveData8(USART1)
-                                              : -1;
-}
-
-void stdio_putchar(char c)
-{
-    while (!LL_USART_IsActiveFlag_TXE(USART1))
-        ;
-    LL_USART_TransmitData8(USART1, c);
 }
 
 void Error_Handler(void)
