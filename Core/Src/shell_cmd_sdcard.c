@@ -14,7 +14,7 @@ static int cmd_ls(int argc, const char *const *argv)
     printf("SD %s contents:\n", SDPath);
     if (f_mount(&SDFatFS, SDPath, 1) != FR_OK) {
         printf("Error mounting SD\r\n");
-        return 0;
+        return -1;
     }
     if (f_opendir(&dir, SDPath) == FR_OK) {
         static FILINFO inf;
@@ -25,9 +25,11 @@ static int cmd_ls(int argc, const char *const *argv)
         }
     } else {
         printf("Fail to open SD\r\n");
+        return -1;
     }
     if (f_mount(NULL, SDPath, 1) != FR_OK) {
         printf("Error unmounting SD\r\n");
+        return -1;
     }
     return 0;
 }
