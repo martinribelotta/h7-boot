@@ -20,7 +20,7 @@ extern uint8_t QSPI_Read(QSPI_HandleTypeDef *hqspi, uint8_t *pData,
                          uint32_t ReadAddr, uint32_t Size);
 extern uint8_t QSPI_Write(QSPI_HandleTypeDef *hqspi, const uint8_t *pData,
                           uint32_t ReadAddr, uint32_t Size);
-extern uint8_t QSPI_Erase4KSector(QSPI_HandleTypeDef *hqspi, uint32_t addr);
+extern uint8_t QSPI_EraseSector(QSPI_HandleTypeDef *hqspi, uint32_t addr);
 extern uint8_t QSPI_SendRecv(QSPI_HandleTypeDef *hqspi, void *send_buf,
                              size_t send_length, void *recv_buf,
                              size_t recv_length);

@@ -29,6 +29,8 @@
 #define QUAD_OUT_FAST_READ_CMD 0x6B
 #define QUAD_INOUT_FAST_READ_CMD 0xEB
 
+#define QUAD_INOUT_FAST_READ_DUMMY_CYCLES 6
+
 #define ERASE_CMD 0x20
 #define WRITE_CMD 0x02
 
@@ -241,7 +243,7 @@ uint8_t QSPI_Write(QSPI_HandleTypeDef *hqspi, const uint8_t *pData,
     return QSPI_AutoPollingMemReady(hqspi, HAL_QSPI_TIMEOUT_DEFAULT_VALUE);
 }
 
-uint8_t QSPI_Erase4KSector(QSPI_HandleTypeDef *hqspi, uint32_t addr)
+uint8_t QSPI_EraseSector(QSPI_HandleTypeDef *hqspi, uint32_t addr)
 {
     uint8_t cmd[4] = {ERASE_CMD, (addr >> 16) & 0xff, (addr >> 8) & 0xff,
                       (addr)&0xff};
@@ -390,6 +392,54 @@ uint8_t QSPI_ResetMemory(QSPI_HandleTypeDef *hqspi)
 
     return QSPI_OK;
 }
+
+uint8_t QSPI_MMAP_On(QSPI_HandleTypeDef *hqspi)
+{
+    QSPI_CommandTypeDef cmd;
+    QSPI_MemoryMappedTypeDef cfg;
+
+    /* Configure the command for the read instruction */
+    cmd.InstructionMode = QSPI_INSTRUCTION_1_LINE;
+    cmd.Instruction = QUAD_INOUT_FAST_READ_CMD;
+    cmd.AddressMode = QSPI_ADDRESS_4_LINES;
+    cmd.AddressSize = QSPI_ADDRESS_24_BITS;
+    cmd.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
+    cmd.DataMode = QSPI_DATA_4_LINES;
+    cmd.DummyCycles = QUAD_INOUT_FAST_READ_DUMMY_CYCLES;
+    cmd.DdrMode = QSPI_DDR_MODE_DISABLE;
+    cmd.DdrHoldHalfCycle = QSPI_DDR_HHC_ANALOG_DELAY;
+    cmd.SIOOMode = QSPI_SIOO_INST_EVERY_CMD;
+    cmd.Address = 0;
+    cmd.AlternateBytes = 0;
+    cmd.AlternateBytesSize = QSPI_ALTERNATE_BYTES_8_BITS;
+    cmd.NbData = 0;
+
+    /* Configure the memory mapped mode */
+    cfg.TimeOutActivation = QSPI_TIMEOUT_COUNTER_ENABLE;
+    cfg.TimeOutPeriod = 1;
+
+    if (HAL_QSPI_MemoryMapped(hqspi, &cmd, &cfg) != HAL_OK) {
+        return QSPI_ERROR;
+    }
+
+    size_t size = 1 << hqspi->Init.FlashSize;
+    SCB_CleanInvalidateDCache_by_Addr((uint32_t *)QSPI_BASE, size);
+
+    return QSPI_OK;
+}
+
+uint8_t QSPI_MMAP_Off(QSPI_HandleTypeDef *hqspi)
+{
+    hqspi->Instance->CR |= QUADSPI_CR_ABORT_Msk;
+    while ((hqspi->Instance->SR & QUADSPI_SR_BUSY_Msk) != 0)
+        ;
+    hqspi->Instance->CCR &= ~QUADSPI_CCR_FMODE_Msk;
+    HAL_QSPI_DeInit(hqspi);
+    HAL_QSPI_Init(hqspi);
+    QSPI_ResetMemory(hqspi);
+    return QSPI_OK;
+}
+
 
 size_t QSPI_EraseSize(void)
 {
