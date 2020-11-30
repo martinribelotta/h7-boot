@@ -3,7 +3,6 @@
 #include "quadspi.h"
 #include "sdmmc.h"
 #include "usart.h"
-#include "usb_host.h"
 #include "gpio.h"
 #include "qspi.h"
 #include "microrl.h"
@@ -29,7 +28,6 @@ void __premain(void)
     MX_QUADSPI_Init();
     MX_SDMMC1_SD_Init();
     MX_FATFS_Init();
-    // MX_USB_HOST_Init();
 }
 
 microrl_t mrl;
@@ -65,7 +63,6 @@ int main(void)
     microrl_init(&mrl, microrl_print);
     microrl_set_execute_callback(&mrl, shell_execute);
     while (1) {
-        // MX_USB_HOST_Process();
         if (LL_USART_IsActiveFlag_RXNE(USART1)) {
             int c = LL_USART_ReceiveData8(USART1);
             microrl_insert_char(&mrl, c);
