@@ -17,6 +17,8 @@ jobs:
       run: sudo apt-get install gcc-arm-none-eabi
     - name: make
       run: make -j6
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v2
       with:
         name: binaries
         ṕath: build/h7-boot.*
