@@ -1,4 +1,4 @@
-TARGET = testbench-h7
+TARGET = h7-boot
 VERBOSE = n
 DEBUG = 1
 OPT = -Og

@@ -7,7 +7,7 @@
         {
             "name": "Cortex Debug",
             "cwd": "${workspaceRoot}",
-            "executable": "${workspaceFolder}/build/testbench-h7.elf",
+            "executable": "${workspaceFolder}/build/h7-boot.elf",
             "request": "launch",
             "type": "cortex-debug",
             "runToMain": true,
