@@ -306,5 +306,4 @@ static SHELL_CMD(qspicat, "Dump ascii from QSPI: qspicat <addr> <n>", qspicat);
 static SHELL_CMD(qspie, "Erase QSPI sectors: qspie <addr> <bytes>", qspie);
 static SHELL_CMD(qspiea, "Erase All QSPI", qspiea);
 static SHELL_CMD(testqspi, "Perform a QSPI test", testqspi);
-static SHELL_CMD(qspicp, "Write file from sd to QSPI: qspicp <file> <addr>",
-                 qspicp);
+static SHELL_CMD(qspicp, "Copy sd file to QSPI: qspicp <file> <addr>", qspicp);
