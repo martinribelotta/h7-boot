@@ -153,6 +153,17 @@ int MX_QUADSPI_Erase(uint32_t addr, size_t size)
     return size - (end - addr);
 }
 
+int MX_QUADSPI_EraseAll(void)
+{
+    if (QSPI_WriteEnable(&hqspi) != QSPI_OK) {
+        return 0;
+    }
+    if (QSPI_EraseAll(&hqspi) != QSPI_OK) {
+        return 0;
+    }
+    return 1;
+}
+
 int MX_QUADSPI_Write(const void *buf, uint32_t addr, size_t size)
 {
     size_t writeCount = 0;

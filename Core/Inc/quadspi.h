@@ -42,6 +42,7 @@ void MX_QUADSPI_Init(void);
 
 extern size_t MX_QUADSPI_Read(void *buf, uint32_t addr, size_t size);
 extern int MX_QUADSPI_Erase(uint32_t addr, size_t size);
+extern int MX_QUADSPI_EraseAll(void);
 extern int MX_QUADSPI_Write(const void *buf, uint32_t addr, size_t size);
 extern int MX_QUADSPI_EnterMMAP(void);
 extern void MX_QUADSPI_ExitMMAP(void);

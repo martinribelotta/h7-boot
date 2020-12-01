@@ -149,6 +149,13 @@ static uint32_t round_down_u32(uint32_t v, uint32_t n)
     return v - (v % n);
 }
 
+static int qspiea(int argc, const char *const *argv)
+{
+    puts("Erasing entire flash");
+    puts(MX_QUADSPI_EraseAll()? "Erase Ok": "Erase Fail");
+    return 0;
+}
+
 static int qspie(int argc, const char *const *argv)
 {
     puts("TODO: Implement me");
@@ -297,6 +304,7 @@ static SHELL_CMD(qspicmd, "Put QSPI in Command mode", qspicmd);
 static SHELL_CMD(qspir, "Read QSPI memory: qspir <addr> <bytes>", qspir);
 static SHELL_CMD(qspicat, "Dump ascii from QSPI: qspicat <addr> <n>", qspicat);
 static SHELL_CMD(qspie, "Erase QSPI sectors: qspie <addr> <bytes>", qspie);
+static SHELL_CMD(qspiea, "Erase All QSPI", qspiea);
 static SHELL_CMD(testqspi, "Perform a QSPI test", testqspi);
 static SHELL_CMD(qspicp, "Write file from sd to QSPI: qspicp <file> <addr>",
                  qspicp);

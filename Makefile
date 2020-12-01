@@ -1,7 +1,7 @@
 TARGET = testbench-h7
 VERBOSE = n
 DEBUG = 1
-OPT = -Os
+OPT = -Og
 BUILD_DIR := build
 LIBS := c m
 LIBDIR := 

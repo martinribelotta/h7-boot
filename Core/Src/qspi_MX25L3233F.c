@@ -32,6 +32,7 @@
 #define QUAD_INOUT_FAST_READ_DUMMY_CYCLES 6
 
 #define ERASE_CMD 0x20
+#define ERASE_ALL_CMD 0x60
 #define WRITE_CMD 0x02
 
 /**
@@ -254,6 +255,32 @@ uint8_t QSPI_EraseSector(QSPI_HandleTypeDef *hqspi, uint32_t addr)
     return QSPI_AutoPollingMemReady(hqspi, HAL_QSPI_TIMEOUT_DEFAULT_VALUE);
 }
 
+uint8_t QSPI_EraseAll(QSPI_HandleTypeDef *hqspi)
+{
+    QSPI_CommandTypeDef cmd;
+
+    /* Initialize the reset enable command */
+    cmd.InstructionMode = QSPI_INSTRUCTION_1_LINE;
+    cmd.Instruction = ERASE_ALL_CMD;
+    cmd.AddressMode = QSPI_ADDRESS_NONE;
+    cmd.AlternateByteMode = QSPI_ALTERNATE_BYTES_NONE;
+    cmd.DataMode = QSPI_DATA_NONE;
+    cmd.DummyCycles = 0;
+    cmd.DdrMode = QSPI_DDR_MODE_DISABLE;
+    cmd.DdrHoldHalfCycle = QSPI_DDR_HHC_ANALOG_DELAY;
+    cmd.SIOOMode = QSPI_SIOO_INST_EVERY_CMD;
+
+    /* Send the command */
+    if (HAL_QSPI_Command(hqspi, &cmd, 5000) != HAL_OK) {
+        return QSPI_ERROR;
+    }
+
+    if (QSPI_AutoPollingMemReady(hqspi, 30000) != HAL_OK) {
+        return QSPI_ERROR;
+    }
+    return QSPI_OK;
+}
+
 /**
  * @brief  This function send a Write Enable and wait it is effective.
  * @param  hqspi: QSPI handle
@@ -439,7 +466,6 @@ uint8_t QSPI_MMAP_Off(QSPI_HandleTypeDef *hqspi)
     QSPI_ResetMemory(hqspi);
     return QSPI_OK;
 }
-
 
 size_t QSPI_EraseSize(void)
 {
