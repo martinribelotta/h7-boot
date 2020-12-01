@@ -16,4 +16,7 @@ jobs:
     - name: prepare
       run: sudo apt-get install gcc-arm-none-eabi
     - name: make
-      run: make
+      run: make -j6
+      with:
+        name: binaries
+        ṕath: build/h7-boot.*
