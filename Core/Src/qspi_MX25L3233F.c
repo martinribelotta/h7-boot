@@ -5,41 +5,40 @@
 #define RESET_MEMORY_CMD 0x99
 
 /* Register Operations */
-#define READ_STATUS_REG_CMD 0x05
+#define READ_STATUS_REG_CMD  0x05
 #define WRITE_STATUS_REG_CMD 0x01
 
 /* Status Register */
-#define STATUS_WIP ((uint8_t)0x01)  /*!< Write in progress */
+#define STATUS_WIP  ((uint8_t)0x01) /*!< Write in progress */
 #define STATUS_WREN ((uint8_t)0x02) /*!< Write enable latch */
-#define STATUS_QEN ((uint8_t)0x40)  /*!< Quad enable */
+#define STATUS_QEN  ((uint8_t)0x40) /*!< Quad enable */
 
 /* Write Operations */
-#define WRITE_ENABLE_CMD 0x06
+#define WRITE_ENABLE_CMD  0x06
 #define WRITE_DISABLE_CMD 0x04
 
 /* Register Operations */
-#define READ_STATUS_REG_CMD 0x05
+#define READ_STATUS_REG_CMD  0x05
 #define WRITE_STATUS_REG_CMD 0x01
 
 /* Read Operations */
-#define READ_CMD 0x03
-#define FAST_READ_CMD 0x0B
-#define DUAL_OUT_FAST_READ_CMD 0x3B
+#define READ_CMD                 0x03
+#define FAST_READ_CMD            0x0B
+#define DUAL_OUT_FAST_READ_CMD   0x3B
 #define DUAL_INOUT_FAST_READ_CMD 0xBB
-#define QUAD_OUT_FAST_READ_CMD 0x6B
+#define QUAD_OUT_FAST_READ_CMD   0x6B
 #define QUAD_INOUT_FAST_READ_CMD 0xEB
 
 #define QUAD_INOUT_FAST_READ_DUMMY_CYCLES 6
 
-#define ERASE_CMD 0x20
+#define ERASE_CMD     0x20
 #define ERASE_ALL_CMD 0x60
-#define WRITE_CMD 0x02
+#define WRITE_CMD     0x02
 
 /**
  * This function can send or send then receive QSPI data.
  */
-uint8_t qspi_send_then_recv(QSPI_HandleTypeDef *hqspi, void *send_buf,
-                            size_t send_length, void *recv_buf,
+uint8_t qspi_send_then_recv(QSPI_HandleTypeDef *hqspi, void *send_buf, size_t send_length, void *recv_buf,
                             size_t recv_length)
 {
     QSPI_CommandTypeDef Cmdhandler;
@@ -125,8 +124,7 @@ uint8_t qspi_send_then_recv(QSPI_HandleTypeDef *hqspi, void *send_buf,
         HAL_QSPI_Command(hqspi, &Cmdhandler, 5000);
 
         if (send_length - count > 0) {
-            if (HAL_QSPI_Transmit(hqspi, (uint8_t *)(ptr + count), 5000) !=
-                HAL_OK) {
+            if (HAL_QSPI_Transmit(hqspi, (uint8_t *)(ptr + count), 5000) != HAL_OK) {
                 // sfud_log_info("qspi send data failed(%d)!", hqspi.ErrorCode);
                 hqspi->State = HAL_QSPI_STATE_READY;
                 result = QSPI_ERROR;
@@ -172,8 +170,7 @@ uint8_t QSPI_GetStatus(QSPI_HandleTypeDef *hqspi, uint8_t *status)
  * @param  Size: Size of data to read
  * @retval QSPI memory status
  */
-uint8_t QSPI_Read(QSPI_HandleTypeDef *hqspi, uint8_t *pData, uint32_t ReadAddr,
-                  uint32_t Size)
+uint8_t QSPI_Read(QSPI_HandleTypeDef *hqspi, uint8_t *pData, uint32_t ReadAddr, uint32_t Size)
 {
     QSPI_CommandTypeDef s_command;
 
@@ -192,30 +189,25 @@ uint8_t QSPI_Read(QSPI_HandleTypeDef *hqspi, uint8_t *pData, uint32_t ReadAddr,
     s_command.SIOOMode = QSPI_SIOO_INST_EVERY_CMD;
 
     /* Configure the command */
-    if (HAL_QSPI_Command(hqspi, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) !=
-        HAL_OK) {
+    if (HAL_QSPI_Command(hqspi, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) {
         return QSPI_ERROR;
     }
 
     /* Set S# timing for Read command: Min 20ns for N25Q128A memory */
-    MODIFY_REG(hqspi->Instance->DCR, QUADSPI_DCR_CSHT,
-               QSPI_CS_HIGH_TIME_2_CYCLE);
+    MODIFY_REG(hqspi->Instance->DCR, QUADSPI_DCR_CSHT, QSPI_CS_HIGH_TIME_2_CYCLE);
 
     /* Reception of the data */
-    if (HAL_QSPI_Receive(hqspi, pData, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) !=
-        HAL_OK) {
+    if (HAL_QSPI_Receive(hqspi, pData, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) {
         return QSPI_ERROR;
     }
 
     /* Restore S# timing for nonRead commands */
-    MODIFY_REG(hqspi->Instance->DCR, QUADSPI_DCR_CSHT,
-               QSPI_CS_HIGH_TIME_5_CYCLE);
+    MODIFY_REG(hqspi->Instance->DCR, QUADSPI_DCR_CSHT, QSPI_CS_HIGH_TIME_5_CYCLE);
 
     return QSPI_OK;
 }
 
-uint8_t QSPI_Write(QSPI_HandleTypeDef *hqspi, const uint8_t *pData,
-                   uint32_t WriteAddr, uint32_t Size)
+uint8_t QSPI_Write(QSPI_HandleTypeDef *hqspi, const uint8_t *pData, uint32_t WriteAddr, uint32_t Size)
 {
     QSPI_CommandTypeDef Cmdhandler;
 
@@ -246,8 +238,7 @@ uint8_t QSPI_Write(QSPI_HandleTypeDef *hqspi, const uint8_t *pData,
 
 uint8_t QSPI_EraseSector(QSPI_HandleTypeDef *hqspi, uint32_t addr)
 {
-    uint8_t cmd[4] = {ERASE_CMD, (addr >> 16) & 0xff, (addr >> 8) & 0xff,
-                      (addr)&0xff};
+    uint8_t cmd[4] = {ERASE_CMD, (addr >> 16) & 0xff, (addr >> 8) & 0xff, (addr)&0xff};
     uint8_t r = qspi_send_then_recv(hqspi, cmd, sizeof(cmd), NULL, 0);
     if (r != QSPI_OK) {
         return r;
@@ -301,8 +292,7 @@ uint8_t QSPI_WriteEnable(QSPI_HandleTypeDef *hqspi)
     s_command.DdrHoldHalfCycle = QSPI_DDR_HHC_ANALOG_DELAY;
     s_command.SIOOMode = QSPI_SIOO_INST_EVERY_CMD;
 
-    if (HAL_QSPI_Command(hqspi, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) !=
-        HAL_OK) {
+    if (HAL_QSPI_Command(hqspi, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) {
         return QSPI_ERROR;
     }
 
@@ -317,8 +307,7 @@ uint8_t QSPI_WriteEnable(QSPI_HandleTypeDef *hqspi)
     s_command.Instruction = READ_STATUS_REG_CMD;
     s_command.DataMode = QSPI_DATA_1_LINE;
 
-    if (HAL_QSPI_AutoPolling(hqspi, &s_command, &s_config,
-                             HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) {
+    if (HAL_QSPI_AutoPolling(hqspi, &s_command, &s_config, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) {
         return QSPI_ERROR;
     }
 
@@ -380,21 +369,18 @@ uint8_t QSPI_ResetMemory(QSPI_HandleTypeDef *hqspi)
     s_command.SIOOMode = QSPI_SIOO_INST_EVERY_CMD;
 
     /* Send the command */
-    if (HAL_QSPI_Command(hqspi, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) !=
-        HAL_OK) {
+    if (HAL_QSPI_Command(hqspi, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) {
         return QSPI_ERROR;
     }
 
     /* Send the reset memory command */
     s_command.Instruction = RESET_MEMORY_CMD;
-    if (HAL_QSPI_Command(hqspi, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) !=
-        HAL_OK) {
+    if (HAL_QSPI_Command(hqspi, &s_command, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) {
         return QSPI_ERROR;
     }
 
     /* Configure automatic polling mode to wait the memory is ready */
-    if (QSPI_AutoPollingMemReady(hqspi, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) !=
-        QSPI_OK) {
+    if (QSPI_AutoPollingMemReady(hqspi, HAL_QPSI_TIMEOUT_DEFAULT_VALUE) != QSPI_OK) {
         return QSPI_ERROR;
     }
 

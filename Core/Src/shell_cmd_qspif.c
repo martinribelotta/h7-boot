@@ -152,7 +152,7 @@ static uint32_t round_down_u32(uint32_t v, uint32_t n)
 static int qspiea(int argc, const char *const *argv)
 {
     puts("Erasing entire flash");
-    puts(MX_QUADSPI_EraseAll()? "Erase Ok": "Erase Fail");
+    puts(MX_QUADSPI_EraseAll() ? "Erase Ok" : "Erase Fail");
     return 0;
 }
 
@@ -173,12 +173,10 @@ static int qspie(int argc, const char *const *argv)
         return -1;
     }
     uint32_t align = QSPI_EraseSize();
-    printf("Aligining %ld bytes to %ld with start 0x%08lX\n", size, align,
-           addr);
+    printf("Aligining %ld bytes to %ld with start 0x%08lX\n", size, align, addr);
     size = round_up_u32(size, align);
     addr = round_down_u32(addr, align);
-    printf("Erasing %ld bytes from 0x%08lX starting to 0x%08lX\n", size, addr,
-           addr);
+    printf("Erasing %ld bytes from 0x%08lX starting to 0x%08lX\n", size, addr, addr);
     uint32_t erased = MX_QUADSPI_Erase(addr, size);
     printf("Erased %ld bytes\n", erased);
     return 0;
@@ -263,7 +261,7 @@ static int qspicp(int argc, const char *const *argv)
         goto umount_out;
     }
     size_t bufsize = QSPI_EraseSize();
-    uint8_t * cpbuf = malloc(bufsize);
+    uint8_t *cpbuf = malloc(bufsize);
     if (!cpbuf) {
         ret = -3;
         perror("malloc buffer");

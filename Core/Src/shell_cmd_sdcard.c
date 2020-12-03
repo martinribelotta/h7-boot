@@ -57,7 +57,7 @@ static int cmd_load(int argc, const char *const *argv)
         return -1;
     }
     uint32_t readed = 0;
-    void *ptr = (void*) addr;
+    void *ptr = (void *)addr;
     puts("Reading file...");
     while (readed < f_size(&fd)) {
         UINT chunk_readed;

@@ -5,8 +5,7 @@
 #include <memory.h>
 #include <stdio.h>
 
-static int extract_addr_size(int argc, const char *const *argv, uint32_t *addr,
-                             uint32_t *size)
+static int extract_addr_size(int argc, const char *const *argv, uint32_t *addr, uint32_t *size)
 {
     if (argc < 3) {
         printf("usage: %s <addr> <size>\n", argv[0]);
@@ -132,7 +131,7 @@ static int cmd_cat(int argc, const char *const *argv)
     if (extract_addr_size(argc, argv, &addr, &size) != 0) {
         return -1;
     }
-    fwrite((const void*) addr, size, 1, stdout);
+    fwrite((const void *)addr, size, 1, stdout);
     printf("\n");
     return 0;
 }

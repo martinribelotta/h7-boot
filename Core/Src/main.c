@@ -34,8 +34,7 @@ microrl_t mrl;
 
 int stdio_getchar(void)
 {
-    return LL_USART_IsActiveFlag_RXNE(USART1) ? LL_USART_ReceiveData8(USART1)
-                                              : -1;
+    return LL_USART_IsActiveFlag_RXNE(USART1) ? LL_USART_ReceiveData8(USART1) : -1;
 }
 
 void stdio_putchar(char c)
@@ -174,11 +173,9 @@ static int print_memory_map(int argc, const char *const *argv)
     puts("   base        top    size      attr  name");
     for (int i = 0; i < (sizeof(memory_map) / sizeof(*memory_map)); i++) {
         const memory_entry_t *e = &memory_map[i];
-        char sattr[4] = {(e->attr & ATTR_R) ? 'r' : '-',
-                         (e->attr & ATTR_W) ? 'w' : '-',
-                         (e->attr & ATTR_X) ? 'x' : '-', 0};
-        printf("0x%08lX 0x%08lX %-10ld %s  %s\n", e->addr, e->addr + e->size,
-               e->size, sattr, e->name);
+        char sattr[4] = {(e->attr & ATTR_R) ? 'r' : '-', (e->attr & ATTR_W) ? 'w' : '-', (e->attr & ATTR_X) ? 'x' : '-',
+                         0};
+        printf("0x%08lX 0x%08lX %-10ld %s  %s\n", e->addr, e->addr + e->size, e->size, sattr, e->name);
     }
     return 0;
 }

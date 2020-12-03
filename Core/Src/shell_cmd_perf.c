@@ -24,13 +24,12 @@ static unsigned long calcbogo(unsigned long loops)
 
 static int cmd_bogomips(int argc, const char *const *argv)
 {
-    for (unsigned long loops=1 << 20; loops; loops<<=1) {
+    for (unsigned long loops = 1 << 20; loops; loops <<= 1) {
         unsigned long lps = calcbogo(loops);
         if (lps) {
             unsigned long intPart = lps / 1000000;
             unsigned long fracPart = lps % 1000000;
-            printf("Loops per sec: %lu - %lu.%02lu BogoMips\n",
-                   lps, intPart, fracPart);
+            printf("Loops per sec: %lu - %lu.%02lu BogoMips\n", lps, intPart, fracPart);
             return 0;
         }
     }

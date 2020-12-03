@@ -119,4 +119,4 @@ PHONY_TARGETS:=$(filter-out .%, $(shell grep -E '^.PHONY:' Makefile | cut -f 2 -
 
 .format:
 	@echo CLANG FORMAT
-	@echo clang-format $(wildcard Core/*/*.c) $(wildcard Core/*/*.h)
+	@clang-format --verbose -i $(wildcard Core/*/*.c) $(wildcard Core/*/*.h)

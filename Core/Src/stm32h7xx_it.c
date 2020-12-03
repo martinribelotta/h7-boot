@@ -59,32 +59,32 @@
 #define CHECK_BIT(REG, POS) ((REG) & (1u << (POS)))
 
 /* Hard Fault Status Register. */
-#define FORCED ((uint8_t)30u)
+#define FORCED  ((uint8_t)30u)
 #define VECTTBL ((uint8_t)1u)
 
 /* MemManage Fault Status Register (MMFSR; 0-7 bits in CFSR). */
 #define MMARVALID ((uint8_t)7u)
-#define MLSPERR ((uint8_t)5u) /**< Only on ARM Cortex-M4F. */
-#define MSTKERR ((uint8_t)4u)
+#define MLSPERR   ((uint8_t)5u) /**< Only on ARM Cortex-M4F. */
+#define MSTKERR   ((uint8_t)4u)
 #define MUNSTKERR ((uint8_t)3u)
-#define DACCVIOL ((uint8_t)1u)
-#define IACCVIOL ((uint8_t)0u)
+#define DACCVIOL  ((uint8_t)1u)
+#define IACCVIOL  ((uint8_t)0u)
 
 /* Bus Fault Status Register (BFSR; 8-15 bits in CFSR). */
-#define BFARVALID ((uint8_t)15u)
-#define LSPERR ((uint8_t)13u) /**< Only on ARM Cortex-M4F. */
-#define STKERR ((uint8_t)12u)
-#define UNSTKERR ((uint8_t)11u)
+#define BFARVALID   ((uint8_t)15u)
+#define LSPERR      ((uint8_t)13u) /**< Only on ARM Cortex-M4F. */
+#define STKERR      ((uint8_t)12u)
+#define UNSTKERR    ((uint8_t)11u)
 #define IMPRECISERR ((uint8_t)10u)
-#define PRECISERR ((uint8_t)9u)
-#define IBUSERR ((uint8_t)8u)
+#define PRECISERR   ((uint8_t)9u)
+#define IBUSERR     ((uint8_t)8u)
 
 /* Usage Fault Status Register (BFSR; 16-25 bits in CFSR). */
-#define DIVBYZERO ((uint8_t)25u) /**< Has to be enabled in CCR. */
-#define UNALIGNED ((uint8_t)24u) /**< Has to be enabled in CCR. */
-#define NOCP ((uint8_t)19u)
-#define INVPC ((uint8_t)18u)
-#define INVSTATE ((uint8_t)17u)
+#define DIVBYZERO  ((uint8_t)25u) /**< Has to be enabled in CCR. */
+#define UNALIGNED  ((uint8_t)24u) /**< Has to be enabled in CCR. */
+#define NOCP       ((uint8_t)19u)
+#define INVPC      ((uint8_t)18u)
+#define INVSTATE   ((uint8_t)17u)
 #define UNDEFINSTR ((uint8_t)16u)
 /* USER CODE END 0 */
 
@@ -144,7 +144,8 @@ void ReportHardFault(uint32_t *stack_frame, uint32_t exc)
         printf(" - MMAR holds an invalid address.\n");
     }
     if (CHECK_BIT(cfsr, MLSPERR)) {
-        printf(" - Fault occurred during floating-point lazy state preservation.\n");
+        printf(" - Fault occurred during floating-point lazy state "
+               "preservation.\n");
     }
     if (CHECK_BIT(cfsr, MSTKERR)) {
         printf(" - Stacking has caused an access violation.\n");
@@ -153,10 +154,12 @@ void ReportHardFault(uint32_t *stack_frame, uint32_t exc)
         printf(" - Unstacking has caused an access violation.\n");
     }
     if (CHECK_BIT(cfsr, DACCVIOL)) {
-        printf(" - Load or store at a location that does not permit the operation.\n");
+        printf(" - Load or store at a location that does not permit the "
+               "operation.\n");
     }
     if (CHECK_BIT(cfsr, IACCVIOL)) {
-        printf(" - Instruction fetch from a location that does not permit execution.\n");
+        printf(" - Instruction fetch from a location that does not permit "
+               "execution.\n");
     }
     printf("Bus fault status:\n");
     if (CHECK_BIT(cfsr, BFARVALID)) {
@@ -165,7 +168,8 @@ void ReportHardFault(uint32_t *stack_frame, uint32_t exc)
         printf(" - BFAR holds an invalid address.\n");
     }
     if (CHECK_BIT(cfsr, LSPERR)) {
-        printf(" - Fault occurred during floating-point lazy state preservation.\n");
+        printf(" - Fault occurred during floating-point lazy state "
+               "preservation.\n");
     }
     if (CHECK_BIT(cfsr, STKERR)) {
         printf(" - Stacking has caused a Bus fault.\n");
@@ -174,10 +178,12 @@ void ReportHardFault(uint32_t *stack_frame, uint32_t exc)
         printf(" - Unstacking has caused a Bus fault.\n");
     }
     if (CHECK_BIT(cfsr, IMPRECISERR)) {
-        printf(" - Data bus error has occurred, but the return address in the stack is not related to the fault.\n");
+        printf(" - Data bus error has occurred, but the return address in the "
+               "stack is not related to the fault.\n");
     }
     if (CHECK_BIT(cfsr, PRECISERR)) {
-        printf(" - Data bus error has occurred, and the return address points to the instruction that caused the "
+        printf(" - Data bus error has occurred, and the return address points "
+               "to the instruction that caused the "
                "fault.\n");
     }
     if (CHECK_BIT(cfsr, IBUSERR)) {
@@ -185,7 +191,8 @@ void ReportHardFault(uint32_t *stack_frame, uint32_t exc)
     }
     printf("Usage fault status:\n");
     if (CHECK_BIT(cfsr, DIVBYZERO)) {
-        printf(" - The processor has executed an SDIV or UDIV instruction with a divisor of 0.\n");
+        printf(" - The processor has executed an SDIV or UDIV instruction with "
+               "a divisor of 0.\n");
     }
     if (CHECK_BIT(cfsr, UNALIGNED)) {
         printf(" - The processor has made an unaligned memory access.\n");
@@ -197,10 +204,12 @@ void ReportHardFault(uint32_t *stack_frame, uint32_t exc)
         printf(" - Illegal attempt to load of EXC_RETURN to the PC.\n");
     }
     if (CHECK_BIT(cfsr, INVSTATE)) {
-        printf(" - Attempted to execute an instruction that makes illegal use of the EPSR.\n");
+        printf(" - Attempted to execute an instruction that makes illegal use "
+               "of the EPSR.\n");
     }
     if (CHECK_BIT(cfsr, INVSTATE)) {
-        printf(" - The processor has attempted to execute an undefined instruction.\n");
+        printf(" - The processor has attempted to execute an undefined "
+               "instruction.\n");
     }
     printf("End Of report\r\n");
 
@@ -222,134 +231,130 @@ void ReportHardFault(uint32_t *stack_frame, uint32_t exc)
 /*           Cortex Processor Interruption and Exception Handlers          */
 /******************************************************************************/
 /**
-  * @brief This function handles Non maskable interrupt.
-  */
+ * @brief This function handles Non maskable interrupt.
+ */
 void NMI_Handler(void)
 {
-  /* USER CODE BEGIN NonMaskableInt_IRQn 0 */
+    /* USER CODE BEGIN NonMaskableInt_IRQn 0 */
 
-  /* USER CODE END NonMaskableInt_IRQn 0 */
-  /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
+    /* USER CODE END NonMaskableInt_IRQn 0 */
+    /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
 
-  /* USER CODE END NonMaskableInt_IRQn 1 */
+    /* USER CODE END NonMaskableInt_IRQn 1 */
 }
 
 /**
-  * @brief This function handles Hard fault interrupt.
-  */
+ * @brief This function handles Hard fault interrupt.
+ */
 void HardFault_Handler(void)
 {
-  /* USER CODE BEGIN HardFault_IRQn 0 */
+    /* USER CODE BEGIN HardFault_IRQn 0 */
     __asm__ volatile("TST    LR, #0b0100;      "
                      "ITE    EQ;               "
                      "MRSEQ  R0, MSP;          "
                      "MRSNE  R0, PSP;          "
                      "MOV    R1, LR;           "
                      "B      ReportHardFault;  ");
-  /* USER CODE END HardFault_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
-    /* USER CODE END W1_HardFault_IRQn 0 */
-  }
+    /* USER CODE END HardFault_IRQn 0 */
+    while (1) {
+        /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+        /* USER CODE END W1_HardFault_IRQn 0 */
+    }
 }
 
 /**
-  * @brief This function handles Memory management fault.
-  */
+ * @brief This function handles Memory management fault.
+ */
 void MemManage_Handler(void)
 {
-  /* USER CODE BEGIN MemoryManagement_IRQn 0 */
+    /* USER CODE BEGIN MemoryManagement_IRQn 0 */
 
-  /* USER CODE END MemoryManagement_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_MemoryManagement_IRQn 0 */
-    /* USER CODE END W1_MemoryManagement_IRQn 0 */
-  }
+    /* USER CODE END MemoryManagement_IRQn 0 */
+    while (1) {
+        /* USER CODE BEGIN W1_MemoryManagement_IRQn 0 */
+        /* USER CODE END W1_MemoryManagement_IRQn 0 */
+    }
 }
 
 /**
-  * @brief This function handles Pre-fetch fault, memory access fault.
-  */
+ * @brief This function handles Pre-fetch fault, memory access fault.
+ */
 void BusFault_Handler(void)
 {
-  /* USER CODE BEGIN BusFault_IRQn 0 */
+    /* USER CODE BEGIN BusFault_IRQn 0 */
 
-  /* USER CODE END BusFault_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_BusFault_IRQn 0 */
-    /* USER CODE END W1_BusFault_IRQn 0 */
-  }
+    /* USER CODE END BusFault_IRQn 0 */
+    while (1) {
+        /* USER CODE BEGIN W1_BusFault_IRQn 0 */
+        /* USER CODE END W1_BusFault_IRQn 0 */
+    }
 }
 
 /**
-  * @brief This function handles Undefined instruction or illegal state.
-  */
+ * @brief This function handles Undefined instruction or illegal state.
+ */
 void UsageFault_Handler(void)
 {
-  /* USER CODE BEGIN UsageFault_IRQn 0 */
+    /* USER CODE BEGIN UsageFault_IRQn 0 */
 
-  /* USER CODE END UsageFault_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_UsageFault_IRQn 0 */
-    /* USER CODE END W1_UsageFault_IRQn 0 */
-  }
+    /* USER CODE END UsageFault_IRQn 0 */
+    while (1) {
+        /* USER CODE BEGIN W1_UsageFault_IRQn 0 */
+        /* USER CODE END W1_UsageFault_IRQn 0 */
+    }
 }
 
 /**
-  * @brief This function handles System service call via SWI instruction.
-  */
+ * @brief This function handles System service call via SWI instruction.
+ */
 void SVC_Handler(void)
 {
-  /* USER CODE BEGIN SVCall_IRQn 0 */
+    /* USER CODE BEGIN SVCall_IRQn 0 */
 
-  /* USER CODE END SVCall_IRQn 0 */
-  /* USER CODE BEGIN SVCall_IRQn 1 */
+    /* USER CODE END SVCall_IRQn 0 */
+    /* USER CODE BEGIN SVCall_IRQn 1 */
 
-  /* USER CODE END SVCall_IRQn 1 */
+    /* USER CODE END SVCall_IRQn 1 */
 }
 
 /**
-  * @brief This function handles Debug monitor.
-  */
+ * @brief This function handles Debug monitor.
+ */
 void DebugMon_Handler(void)
 {
-  /* USER CODE BEGIN DebugMonitor_IRQn 0 */
+    /* USER CODE BEGIN DebugMonitor_IRQn 0 */
 
-  /* USER CODE END DebugMonitor_IRQn 0 */
-  /* USER CODE BEGIN DebugMonitor_IRQn 1 */
+    /* USER CODE END DebugMonitor_IRQn 0 */
+    /* USER CODE BEGIN DebugMonitor_IRQn 1 */
 
-  /* USER CODE END DebugMonitor_IRQn 1 */
+    /* USER CODE END DebugMonitor_IRQn 1 */
 }
 
 /**
-  * @brief This function handles Pendable request for system service.
-  */
+ * @brief This function handles Pendable request for system service.
+ */
 void PendSV_Handler(void)
 {
-  /* USER CODE BEGIN PendSV_IRQn 0 */
+    /* USER CODE BEGIN PendSV_IRQn 0 */
 
-  /* USER CODE END PendSV_IRQn 0 */
-  /* USER CODE BEGIN PendSV_IRQn 1 */
+    /* USER CODE END PendSV_IRQn 0 */
+    /* USER CODE BEGIN PendSV_IRQn 1 */
 
-  /* USER CODE END PendSV_IRQn 1 */
+    /* USER CODE END PendSV_IRQn 1 */
 }
 
 /**
-  * @brief This function handles System tick timer.
-  */
+ * @brief This function handles System tick timer.
+ */
 void SysTick_Handler(void)
 {
-  /* USER CODE BEGIN SysTick_IRQn 0 */
+    /* USER CODE BEGIN SysTick_IRQn 0 */
 
-  /* USER CODE END SysTick_IRQn 0 */
-  HAL_IncTick();
-  /* USER CODE BEGIN SysTick_IRQn 1 */
+    /* USER CODE END SysTick_IRQn 0 */
+    HAL_IncTick();
+    /* USER CODE BEGIN SysTick_IRQn 1 */
 
-  /* USER CODE END SysTick_IRQn 1 */
+    /* USER CODE END SysTick_IRQn 1 */
 }
 
 /******************************************************************************/

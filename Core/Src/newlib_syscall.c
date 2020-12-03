@@ -17,7 +17,7 @@ _ssize_t _read_r(struct _reent *r, int fd, void *buf, size_t nbytes)
         return -1;
     }
 
-    _ssize_t readed=0;
+    _ssize_t readed = 0;
 
     while (readed < nbytes) {
         int c = stdio_getchar();

@@ -24,21 +24,22 @@ Token is word separate by white space, for example 3 token line:
 #define _COMMAND_TOKEN_NMB 8
 
 /*
-Define you prompt string here. You can use colors escape code, for highlight you prompt,
-for example this prompt will green color (if you terminal supports color)*/
+Define you prompt string here. You can use colors escape code, for highlight you
+prompt, for example this prompt will green color (if you terminal supports
+color)*/
 //#define _PROMPT_DEFAULT "\033[32mIRin >\033[0m "	// green color
 #define _PROMPT_DEFAULT "\033[32m$>\033[0m " // green color
 //#define _PROMPT_DEFAULT "$> "
 
 /*
-Define prompt text (without ESC sequence, only text) prompt length, it needs because if you use
-ESC sequence, it's not possible detect only text length*/
+Define prompt text (without ESC sequence, only text) prompt length, it needs
+because if you use ESC sequence, it's not possible detect only text length*/
 #define _PROMPT_LEN 3
 
-/*Define it, if you wanna use completion functional, also set completion callback in you code,
-now if user press TAB calls 'copmlitetion' callback. If you no need it, you can just set
-NULL to callback ptr and do not use it, but for memory saving tune,
-if you are not going to use it - disable this define.*/
+/*Define it, if you wanna use completion functional, also set completion
+callback in you code, now if user press TAB calls 'copmlitetion' callback. If
+you no need it, you can just set NULL to callback ptr and do not use it, but for
+memory saving tune, if you are not going to use it - disable this define.*/
 //#define _USE_COMPLETE
 
 /*Define it, if you wanna use history. It s work's like bash history, and
@@ -55,15 +56,16 @@ small and embedded devices. Overhead is 2 char on each saved line*/
 #define _RING_HISTORY_LEN 64
 
 /*
-Enable Handling terminal ESC sequence. If disabling, then cursor arrow, HOME, END will not work,
+Enable Handling terminal ESC sequence. If disabling, then cursor arrow, HOME,
+END will not work,
 use Ctrl+A(B,F,P,N,A,E,H,K,U,C) see README, but decrease code memory.*/
 #define _USE_ESC_SEQ
 
 /*
 Use snprintf from you standard complier library, but it gives some overhead.
-If not defined, use my own u16int_to_str variant, it's save about 800 byte of code size
-on AVR (avr-gcc build).
-Try to build with and without, and compare total code size for tune library.
+If not defined, use my own u16int_to_str variant, it's save about 800 byte of
+code size on AVR (avr-gcc build). Try to build with and without, and compare
+total code size for tune library.
 */
 #define _USE_LIBC_STDIO
 

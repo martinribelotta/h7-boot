@@ -70,14 +70,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define USER_SWITCH_Pin LL_GPIO_PIN_13
-#define USER_SWITCH_GPIO_Port GPIOC
-#define USB_OTG_HS_EN_Pin LL_GPIO_PIN_12
+#define USER_SWITCH_Pin         LL_GPIO_PIN_13
+#define USER_SWITCH_GPIO_Port   GPIOC
+#define USB_OTG_HS_EN_Pin       LL_GPIO_PIN_12
 #define USB_OTG_HS_EN_GPIO_Port GPIOE
-#define USER_LED_Pin LL_GPIO_PIN_8
-#define USER_LED_GPIO_Port GPIOA
-#define SDMMC_CD_Pin LL_GPIO_PIN_10
-#define SDMMC_CD_GPIO_Port GPIOC
+#define USER_LED_Pin            LL_GPIO_PIN_8
+#define USER_LED_GPIO_Port      GPIOA
+#define SDMMC_CD_Pin            LL_GPIO_PIN_10
+#define SDMMC_CD_GPIO_Port      GPIOC
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
