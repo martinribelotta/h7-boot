@@ -26,13 +26,13 @@ C_INCLUDES := $(sort $(dir $(call rwildcard,.,*.h)))
 C_SOURCES := $(filter-out %_template.c, $(call rwildcard,.,*.c))
 ASM_SOURCES := $(call rwildcard,.,*.s)
 
-COMMON_FLAGS := -Wall -fdata-sections -ffunction-sections
+COMMON_FLAGS := $(MCU) $(OPT) -Wall -fdata-sections -ffunction-sections
 
 SPECS_FLAGS := $(addsuffix .specs,$(addprefix -specs=,$(SPECS)))
 
-ASFLAGS := $(MCU) $(OPT) $(COMMON_FLAGS)
+ASFLAGS := $(COMMON_FLAGS)
 
-CFLAGS := $(MCU) $(OPT) $(COMMON_FLAGS)
+CFLAGS := $(COMMON_FLAGS)
 CFLAGS += $(addprefix -D, $(C_DEFS))
 CFLAGS += $(addprefix -I, $(C_INCLUDES))
 CFLAGS += $(SPECS_FLAGS)
@@ -111,3 +111,12 @@ clean:
 	$(Q)-rm -fR $(BUILD_DIR)
 
 -include $(wildcard $(BUILD_DIR)/o/*.d)
+
+PHONY_TARGETS:=$(filter-out .%, $(shell grep -E '^.PHONY:' Makefile | cut -f 2 -d ':'))
+-include vscode-integration.mk
+
+.PHONY: all clean
+
+.format:
+	@echo CLANG FORMAT
+	@echo clang-format $(wildcard Core/*/*.c) $(wildcard Core/*/*.h)

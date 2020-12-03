@@ -1,21 +1,19 @@
 {
     "configurations": [
         {
-            "name": "testbench-h7",
+            "name": "h7-boot",
             "includePath": [
-                "${workspaceFolder}/Core/Inc",
-                "${workspaceFolder}/FATFS/Target",
-                "${workspaceFolder}/FATFS/App",
-                "${workspaceFolder}/USB_HOST/App",
-                "${workspaceFolder}/USB_HOST/Target",
-                "${workspaceFolder}/Drivers/STM32H7xx_HAL_Driver/Inc",
-                "${workspaceFolder}/Drivers/STM32H7xx_HAL_Driver/Inc/Legacy",
-                "${workspaceFolder}/Middlewares/Third_Party/FatFs/src",
-                "${workspaceFolder}/Middlewares/ST/STM32_USB_Host_Library/Core/Inc",
-                "${workspaceFolder}/Middlewares/ST/STM32_USB_Host_Library/Class/MSC/Inc",
-                "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32H7xx/Include",
-                "${workspaceFolder}/microrl",
-                "${workspaceFolder}/Drivers/CMSIS/Include"
+                "${workspaceFolder}/./Core/Inc/",
+                "${workspaceFolder}/./Drivers/CMSIS/Device/ST/STM32H7xx/Include/",
+                "${workspaceFolder}/./Drivers/CMSIS/Include/",
+                "${workspaceFolder}/./Drivers/STM32H7xx_HAL_Driver/Inc/",
+                "${workspaceFolder}/./Drivers/STM32H7xx_HAL_Driver/Inc/Legacy/",
+                "${workspaceFolder}/./FATFS/App/",
+                "${workspaceFolder}/./FATFS/Target/",
+                "${workspaceFolder}/./Middlewares/Third_Party/FatFs/src/",
+                "${workspaceFolder}/./Middlewares/Third_Party/FatFs/src/option/",
+                "${workspaceFolder}/./coremark/",
+                "${workspaceFolder}/./microrl/"
             ],
             "defines": [
                 "USE_FULL_LL_DRIVER",
@@ -27,13 +25,14 @@
                 "-mthumb",
                 "-mfpu=fpv5-d16",
                 "-mfloat-abi=hard",
+                "-Og",
                 "-Wall",
                 "-fdata-sections",
                 "-ffunction-sections"
             ],
             "compilerPath": "arm-none-eabi-gcc",
-            "cStandard": "gnu17",
-            "cppStandard": "gnu++14",
+            "cStandard": "c11",
+            "cppStandard": "c++11",
             "intelliSenseMode": "gcc-arm"
         }
     ],

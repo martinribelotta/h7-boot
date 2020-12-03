@@ -1,21 +1,18 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Cortex Debug",
+            "name": "Launch h7-boot",
             "cwd": "${workspaceRoot}",
             "executable": "${workspaceFolder}/build/h7-boot.elf",
             "request": "launch",
             "type": "cortex-debug",
-            "runToMain": true,
             "servertype": "openocd",
             "configFiles": [
                 "interface/cmsis-dap.cfg",
                 "target/stm32h7x.cfg"
             ],
+            "runToMain": true,
             "preLaunchTask": "make all"
         }
     ]
