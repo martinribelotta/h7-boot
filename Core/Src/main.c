@@ -268,17 +268,15 @@ static SHELL_CMD(qspiboot, "Boot from QSPI", cmd_qspi_boot);
 
 static void boot_process()
 {
-    if (f_mount(&fat, SDPath, 1) != FR_OK) {
-        goto no_sd;
-    }
-    if (try_load_in_ram("axiram.bin", (void *)D1_AXISRAM_BASE)) {
-        if (valid_vtor(D1_AXISRAM_BASE)) {
-            boot_to(D1_AXISRAM_BASE);
+    if (f_mount(&fat, SDPath, 1) == FR_OK) {
+        if (try_load_in_ram("axiram.bin", (void *)D1_AXISRAM_BASE)) {
+            if (valid_vtor(D1_AXISRAM_BASE)) {
+                boot_to(D1_AXISRAM_BASE);
+            }
         }
+        try_load_in_qspi("qflash.bin");
+        f_mount(NULL, SDPath, 1);
     }
-    try_load_in_qspi("qflash.bin");
-    f_mount(NULL, SDPath, 1);
-no_sd:
     try_to_boot_qspi();
 }
 
