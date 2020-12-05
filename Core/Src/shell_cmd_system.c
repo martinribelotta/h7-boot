@@ -9,7 +9,7 @@ static int cmd_info(int argc, const char *const *argv)
 {
     printf("\n" ANSI_COLOR_CLEAR ANSI_FCOLOR_CYAN "** stm32h750 monitor **\n" ANSI_COLOR_CLEAR
            "Compiled at " ANSI_FCOLOR_GREEN __DATE__ ANSI_FCOLOR_MAGENTA " " __TIME__ ANSI_COLOR_CLEAR "\n"
-           "with gcc version " ANSI_FCOLOR_YELLOW __VERSION__ "\n");
+           "with gcc version " ANSI_FCOLOR_YELLOW __VERSION__ ANSI_COLOR_CLEAR "\n");
     return 0;
 }
 

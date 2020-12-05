@@ -7,6 +7,7 @@
 #include "qspi.h"
 #include "microrl.h"
 #include "shell.h"
+#include "stdio_serial.h"
 
 #include <time.h>
 #include <string.h>
@@ -31,18 +32,6 @@ void __premain(void)
 }
 
 microrl_t mrl;
-
-int stdio_getchar(void)
-{
-    return LL_USART_IsActiveFlag_RXNE(USART1) ? LL_USART_ReceiveData8(USART1) : -1;
-}
-
-void stdio_putchar(char c)
-{
-    while (!LL_USART_IsActiveFlag_TXE(USART1))
-        ;
-    LL_USART_TransmitData8(USART1, c);
-}
 
 static void microrl_print(const char *s)
 {
@@ -141,7 +130,7 @@ static int memory_range(uint32_t addr, memory_attr_t attr)
         uint32_t base = e->addr;
         uint32_t upper = e->addr + e->size;
         uint32_t perms = e->attr & attr;
-        if ((addr < upper) && (addr >= base) && (perms == attr)) {
+        if ((addr <= upper) && (addr >= base) && (perms == attr)) {
             return i;
         }
     }
@@ -283,7 +272,9 @@ static void boot_process()
 int main(void)
 {
     print_sysinfo();
-    boot_process();
+    if (LL_GPIO_IsInputPinSet(USER_SWITCH_GPIO_Port, USER_SWITCH_Pin)) {
+        boot_process();
+    }
     microrl_init(&mrl, microrl_print);
     microrl_set_execute_callback(&mrl, shell_execute);
     while (1) {
