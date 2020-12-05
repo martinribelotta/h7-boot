@@ -97,7 +97,7 @@ LoopFillZerobss:
   bl __premain
 /* Call the application's entry point.*/
   bl  main
-  bx  lr    
+  b .
 .size  Reset_Handler, .-Reset_Handler
 
 /**
