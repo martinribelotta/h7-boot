@@ -9,9 +9,13 @@
 #include "shell.h"
 #include "stdio_serial.h"
 
+#include "tusb.h"
+
 #include <time.h>
 #include <string.h>
 #include <stdio.h>
+
+void cdc_task(void);
 
 void SystemClock_Config(void);
 
@@ -277,13 +281,16 @@ int main(void)
     }
     microrl_init(&mrl, microrl_print);
     microrl_set_execute_callback(&mrl, shell_execute);
+    tusb_init();
     while (1) {
+        tud_task();
         if (LL_USART_IsActiveFlag_RXNE(USART1)) {
             int c = LL_USART_ReceiveData8(USART1);
             microrl_insert_char(&mrl, c);
         } else {
             __WFI();
         }
+        cdc_task();
     }
 }
 
@@ -357,4 +364,79 @@ void Error_Handler(void)
     __BKPT(0);
     while (1) {
     }
+}
+
+
+// Invoked when device is mounted
+void tud_mount_cb(void)
+{
+}
+
+// Invoked when device is unmounted
+void tud_umount_cb(void)
+{
+}
+
+// Invoked when usb bus is suspended
+// remote_wakeup_en : if host allow us  to perform remote wakeup
+// Within 7ms, device must draw an average of current less than 2.5 mA from bus
+void tud_suspend_cb(bool remote_wakeup_en)
+{
+  (void) remote_wakeup_en;
+}
+
+// Invoked when usb bus is resumed
+void tud_resume_cb(void)
+{
+}
+
+
+//--------------------------------------------------------------------+
+// USB CDC
+//--------------------------------------------------------------------+
+void cdc_task(void)
+{
+  // connected() check for DTR bit
+  // Most but not all terminal client set this when making connection
+  // if ( tud_cdc_connected() )
+  {
+    // connected and there are data available
+    if ( tud_cdc_available() )
+    {
+      uint8_t buf[64];
+
+      // read and echo back
+      uint32_t count = tud_cdc_read(buf, sizeof(buf));
+
+      for(uint32_t i=0; i<count; i++)
+      {
+        tud_cdc_write_char(buf[i]);
+
+        if ( buf[i] == '\r' ) tud_cdc_write_char('\n');
+      }
+
+      tud_cdc_write_flush();
+    }
+  }
+}
+
+// Invoked when cdc when line state changed e.g connected/disconnected
+void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts)
+{
+  (void) itf;
+  (void) rts;
+
+  // connected
+  if ( dtr )
+  {
+    // print initial message when connected
+    tud_cdc_write_str("\r\nTinyUSB CDC MSC device example\r\n");
+    tud_cdc_write_flush();
+  }
+}
+
+// Invoked when CDC interface received data from host
+void tud_cdc_rx_cb(uint8_t itf)
+{
+  (void) itf;
 }
