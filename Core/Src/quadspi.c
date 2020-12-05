@@ -177,6 +177,7 @@ int MX_QUADSPI_Write(const void *buf, uint32_t addr, size_t size)
         if (QSPI_Write(&hqspi, (const uint8_t *)buf, addr, chunk) != QSPI_OK) {
             break;
         }
+        buf += chunk;
         addr += chunk;
         writeCount += chunk;
     }
