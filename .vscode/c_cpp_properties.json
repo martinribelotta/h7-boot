@@ -16,6 +16,7 @@
                 "${workspaceFolder}/./USB_DEVICE/App/",
                 "${workspaceFolder}/./USB_DEVICE/Target/",
                 "${workspaceFolder}/./coremark/",
+                "${workspaceFolder}/./emfat/",
                 "${workspaceFolder}/./microrl/"
             ],
             "defines": [
