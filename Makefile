@@ -22,9 +22,22 @@ LST := $(PREFIX)objdump
 
 MCU := -mcpu=cortex-m7 -mthumb -mfpu=fpv5-d16 -mfloat-abi=hard
 
-C_INCLUDES := $(sort $(dir $(call rwildcard,.,*.h)))
-C_SOURCES := $(filter-out %_template.c, $(call rwildcard,.,*.c))
-ASM_SOURCES := $(call rwildcard,.,*.s)
+IGNORED_SRC:=%_template.c
+IGNORED_SRC+=./Drivers/CMSIS/Core%
+IGNORED_SRC+=./Drivers/CMSIS/NN/%
+IGNORED_SRC+=./Drivers/CMSIS/DSP/%
+IGNORED_SRC+=./Drivers/CMSIS/RTOS%
+IGNORED_SRC+=./Middlewares/Third_Party/FatFs/src/option/cc%.c
+IGNORED_SRC+=./Drivers/CMSIS/Device/ST/STM32H7xx/Source/%
+
+IGNORED_INC:=./Drivers/CMSIS/Core%
+IGNORED_INC+=./Drivers/CMSIS/NN/%
+IGNORED_INC+=./Drivers/CMSIS/DSP/%
+IGNORED_INC+=./Drivers/CMSIS/RTOS%
+
+C_INCLUDES := $(filter-out $(IGNORED_INC), $(sort $(dir $(call rwildcard,.,*.h))))
+C_SOURCES := $(filter-out $(IGNORED_SRC), $(call rwildcard,.,*.c))
+ASM_SOURCES := $(filter-out $(IGNORED_SRC), $(call rwildcard,.,*.s))
 
 COMMON_FLAGS := $(MCU) $(OPT) -Wall -fdata-sections -ffunction-sections
 
@@ -120,3 +133,6 @@ PHONY_TARGETS:=$(filter-out .%, $(shell grep -E '^.PHONY:' Makefile | cut -f 2 -
 .format:
 	@echo CLANG FORMAT
 	@clang-format --verbose -i $(wildcard Core/*/*.c) $(wildcard Core/*/*.h)
+
+.print-%:
+	@echo $($*)

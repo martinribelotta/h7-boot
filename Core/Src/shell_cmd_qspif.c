@@ -6,8 +6,9 @@
 
 #include "quadspi.h"
 #include "qspi.h"
+#include "ff_gen_drv.h"
 #include "sd_diskio.h"
-#include "sdmmc.h"
+#include "main.h"
 #include "fatfs.h"
 
 static void dumphex(const char *label, const uint8_t *ptr, size_t count)
