@@ -72,6 +72,7 @@ typedef struct
 	uint64_t    vol_size;
 	uint32_t    disk_sectors;
 	const char *vol_label;
+	int result;
 	struct
 	{
 		uint32_t       boot_lba;

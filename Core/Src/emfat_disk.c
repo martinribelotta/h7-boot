@@ -1,5 +1,11 @@
 #include "emfat.h"
 
+#include "quadspi.h"
+#include "flash_cache.h"
+#include "uf2.h"
+
+#include "usbd_def.h"
+
 emfat_t emfat;
 
 #define CMA_TIME EMFAT_ENCODE_CMA_TIME(1, 12, 2020, 13, 0, 0)
@@ -45,11 +51,26 @@ void rofile_read_proc(uint8_t *dest, int size, uint32_t offset, size_t userdata)
 
 void CURRENT_read_proc(uint8_t *dest, int size, uint32_t offset, size_t userdata)
 {
-    memset(dest, '?', size);
+    MX_QUADSPI_Read(dest, offset, size);
 }
 
-void CURRENT_write_proc(const uint8_t *dest, int size, uint32_t offset, size_t userdata)
+bool is_uf2_block (UF2_Block const *bl)
 {
+  return (bl->magicStart0 == UF2_MAGIC_START0) &&
+         (bl->magicStart1 == UF2_MAGIC_START1) &&
+         (bl->magicEnd == UF2_MAGIC_END); //&&
+         //!(bl->flags & UF2_FLAG_NOFLASH);
+}
+
+void CURRENT_write_proc(const uint8_t *src, int size, uint32_t offset, size_t userdata)
+{
+    const UF2_Block *block = (const UF2_Block *) src;
+    if (is_uf2_block(block)) {
+        board_flash_write(block->targetAddr, block->data, block->payloadSize);
+    } else {
+        extern void usbd_storage_trigger_error(int);
+        usbd_storage_trigger_error(USBD_FAIL);
+    }
 }
 
 static emfat_entry_t entries[] = {

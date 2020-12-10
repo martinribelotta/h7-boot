@@ -24,6 +24,10 @@
 
 /* USER CODE BEGIN INCLUDE */
 #include "emfat.h"
+#include "uf2.h"
+
+#include <stdio.h>
+
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -218,7 +222,7 @@ int8_t STORAGE_IsReady_FS(uint8_t lun)
 int8_t STORAGE_IsWriteProtected_FS(uint8_t lun)
 {
   /* USER CODE BEGIN 5 */
-  return (USBD_OK);
+  return 0;
   /* USER CODE END 5 */
 }
 
@@ -235,6 +239,16 @@ int8_t STORAGE_Read_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t bl
   /* USER CODE END 6 */
 }
 
+void usbd_storage_trigger_error(int n)
+{
+  emfat.result = n;
+}
+
+static inline bool is_not_mainflash(const UF2_Block *b)
+{
+  return b->flags & UF2_FLAG_NOFLASH;
+}
+
 /**
   * @brief  .
   * @param  lun: .
@@ -243,8 +257,20 @@ int8_t STORAGE_Read_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t bl
 int8_t STORAGE_Write_FS(uint8_t lun, uint8_t *buf, uint32_t blk_addr, uint16_t blk_len)
 {
   /* USER CODE BEGIN 7 */
-  emfat_write(&emfat, buf, blk_addr, blk_len);
-  return (USBD_OK);
+  //emfat.result = USBD_OK;
+  //emfat_write(&emfat, buf, blk_addr, blk_len);
+  extern bool is_uf2_block (UF2_Block const *bl);
+  extern void CURRENT_write_proc(const uint8_t *src, int size, uint32_t offset, size_t userdata);
+
+  const UF2_Block *bl = (const UF2_Block*) buf;
+
+  if (is_uf2_block(bl)) {
+    printf("UF2 write at 0x%08lX %ld bytes. %ld of %ld\n", bl->targetAddr, bl->payloadSize,
+           bl->blockNo, bl->numBlocks);
+  } else {
+    printf("Writing %d blocks at %ld offset\n", blk_len, blk_addr);
+  }
+  return USBD_OK;
   /* USER CODE END 7 */
 }
 
