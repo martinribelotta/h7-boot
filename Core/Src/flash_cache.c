@@ -22,7 +22,10 @@
  * THE SOFTWARE.
  */
 
+#include "flash_cache.h"
+
 #include <string.h>
+#include <stdio.h>
 
 #include "quadspi.h"
 
@@ -32,29 +35,40 @@
 static uint32_t _fl_addr = FLASH_CACHE_INVALID_ADDR;
 static uint8_t _fl_buf[FLASH_CACHE_SIZE] __attribute__((aligned(4)));
 
-void board_flash_flush(void)
+board_flash_err_t board_flash_flush(void)
 {
   if ( _fl_addr == FLASH_CACHE_INVALID_ADDR ) {
-    return;
+    return BFLASH_RET_OK;
+  }
+  // puts("flash flush");
+  if (MX_QUADSPI_Erase(_fl_addr, FLASH_CACHE_SIZE) != FLASH_CACHE_SIZE) {
+    return BFLASH_RET_NOERASE;
+  }
+  if (MX_QUADSPI_Write(_fl_buf, _fl_addr, FLASH_CACHE_SIZE) != FLASH_CACHE_SIZE) {
+    return BFLASH_RET_NOWRITE;
   }
 
-  MX_QUADSPI_Erase(_fl_addr, FLASH_CACHE_SIZE);
-  MX_QUADSPI_Write(_fl_buf, _fl_addr, FLASH_CACHE_SIZE);
-
   _fl_addr = FLASH_CACHE_INVALID_ADDR;
+  return BFLASH_RET_OK;
 }
 
-void board_flash_write (uint32_t dst, void const *src, uint32_t len)
+board_flash_err_t board_flash_write (uint32_t dst, void const *src, uint32_t len)
 {
   uint32_t new_addr = dst & ~(FLASH_CACHE_SIZE - 1);
 
   if ( new_addr != _fl_addr )
   {
-    board_flash_flush();
+    board_flash_err_t r = board_flash_flush();
+    if (r != BFLASH_RET_OK) {
+      return r;
+    }
 
     _fl_addr = new_addr;
-    MX_QUADSPI_Read(_fl_buf, new_addr, FLASH_CACHE_SIZE);
+    if (MX_QUADSPI_Read(_fl_buf, new_addr, FLASH_CACHE_SIZE) != FLASH_CACHE_SIZE) {
+      return BFLASH_RET_NOREAD;
+    }
   }
 
   memcpy(_fl_buf + (dst & (FLASH_CACHE_SIZE - 1)), src, len);
+  return BFLASH_RET_OK;
 }

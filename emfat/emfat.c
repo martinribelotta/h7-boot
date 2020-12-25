@@ -583,7 +583,7 @@ void fill_dir_sector(emfat_t *emfat, uint8_t *data, emfat_entry_t *entry, uint32
 	{
 		if (entry->dir)
 			fill_entry(de++, entry->name, ATTR_DIR | ATTR_READ, entry->priv.first_clust, entry->cma_time, 0); else
-			fill_entry(de++, entry->name, ATTR_ARCHIVE | ATTR_READ, entry->priv.first_clust, entry->cma_time, entry->curr_size);
+			fill_entry(de++, entry->name, ATTR_ARCHIVE, entry->priv.first_clust, entry->cma_time, entry->curr_size);
 		entry = entry->priv.next;
 		avail -= sizeof(dir_entry);
 	}
