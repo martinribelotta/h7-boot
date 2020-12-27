@@ -32,25 +32,27 @@ emfat_t emfat;
         NULL                                                                                                           \
     }
 
-static const uint8_t info_uf2_data[] = "UF2 Bootloader v1.1.3 SFA\r\n"
-                                       "Model: STM32H7 Minitor\r\n"
-                                       "Board-ID: STM32H7 Generic\r\n"
-                                       "\r\n"
-                                       "Compiled at: " __DATE__ " " __TIME__ "\r\n"
-                                       "With GCC " __VERSION__ "\r\n";
+static const uint8_t info_uf2_data[] = //
+    "UF2 Bootloader v1.1.3 SFA\r\n"
+    "Model: STM32H7 Minitor\r\n"
+    "Board-ID: STM32H7 Generic\r\n"
+    "\r\n"
+    "Compiled at: " __DATE__ " " __TIME__ "\r\n"
+    "With GCC " __VERSION__ "\r\n";
 
 #define URL "https://github.com/martinribelotta/h7-boot"
 
-static const uint8_t index_data[] = "<!DOCTYPE html>"
-                                    "<html>"
-                                    "<head>"
-                                    "<title>Redirecting...</title>"
-                                    "<meta http-equiv=\"refresh\" content=\"0; url=" URL "\"/>"
-                                    "</head>"
-                                    "<body>"
-                                    "<p>Redirec to <a href=\"" URL "\">" URL "</a></p>"
-                                    "</body>"
-                                    "</html>";
+static const uint8_t index_data[] = //
+    "<!DOCTYPE html>"
+    "<html>"
+    "<head>"
+    "<title>Redirecting...</title>"
+    "<meta http-equiv=\"refresh\" content=\"0; url=" URL "\"/>"
+    "</head>"
+    "<body>"
+    "<p>Redirect to <a href=\"" URL "\">" URL "</a></p>"
+    "</body>"
+    "</html>";
 
 void rofile_read_proc(uint8_t *dest, int size, uint32_t offset, size_t userdata)
 {
