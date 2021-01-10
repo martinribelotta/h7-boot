@@ -123,6 +123,10 @@ clean:
 	@echo CLEAN $(BUILD_DIR)
 	$(Q)-rm -fR $(BUILD_DIR)
 
+flash: $(BUILD_DIR)/$(TARGET).elf
+	$(Q)openocd -f interface/cmsis-dap.cfg -f target/stm32h7x.cfg \
+		-c "init" -c "reset halt" -c "program $< verify reset exit"
+
 -include $(wildcard $(BUILD_DIR)/o/*.d)
 
 PHONY_TARGETS:=$(filter-out .%, $(shell grep -E '^.PHONY:' Makefile | cut -f 2 -d ':'))
