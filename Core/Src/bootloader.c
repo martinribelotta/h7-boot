@@ -3,6 +3,7 @@
 
 #include "quadspi.h"
 #include "qspi.h"
+#include "rcc.h"
 
 #include <stdio.h>
 
@@ -82,7 +83,7 @@ static const memory_entry_t memory_map[] = {
     {D2_AHBSRAM_BASE, ATTR_RWX, 288 * 1024, "D2 AHB RAM (alias D2 AXI RAM)"},
     {D3_SRAM_BASE, ATTR_RWX, 64 * 1024, "D3 RAM"},
     {FLASH_BASE, ATTR_RX, FLASH_SIZE, "FLASH"},
-    {QSPI_BASE, ATTR_RWX, 4 * 1024 * 1024, "QSPI FLASH"},
+    {QSPI_BASE, ATTR_RX, 4 * 1024 * 1024, "QSPI FLASH"},
 };
 
 static int memory_range(uint32_t addr, memory_attr_t attr)
@@ -135,8 +136,8 @@ __attribute__((noreturn)) static void boot_to(uint32_t addr)
 {
     const uint32_t *vtor = (uint32_t *)addr;
     __disable_irq();
-    SCB_DisableICache();
-    SCB_DisableDCache();
+    SCB_InvalidateDCache();
+    SCB_InvalidateICache();
     NVIC->ICER[0] = 0xFFFFFFFF;
     NVIC->ICER[1] = 0xFFFFFFFF;
     NVIC->ICER[2] = 0xFFFFFFFF;
@@ -229,6 +230,18 @@ static void try_to_boot_qspi()
 {
     MX_QUADSPI_EnterMMAP();
     if (valid_vtor(QSPI_BASE)) {
+        const uint32_t * const vtor = (const uint32_t *const) QSPI_BASE;
+        const rcc_init_t *rcc_code = (const rcc_init_t*)(vtor[7]);
+        rcc_init_t copy = *rcc_code;
+        MX_QUADSPI_ExitMMAP();
+        rcc_initialize(&copy);
+        if (LL_RCC_GetQSPIClockFreq(LL_RCC_QSPI_CLKSOURCE) == LL_RCC_PERIPH_FREQUENCY_NO) {
+            puts("No QSPI clock... fail!");
+            NVIC_SystemReset();
+            for(;;);
+        }
+        MX_QUADSPI_Init();
+        MX_QUADSPI_EnterMMAP();
         boot_to(QSPI_BASE);
     }
     MX_QUADSPI_ExitMMAP();

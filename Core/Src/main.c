@@ -56,7 +56,7 @@ SD_HandleTypeDef hsd1;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART1_UART_Init(void);
-static void MX_QUADSPI_Init(void);
+void MX_QUADSPI_Init(void);
 static void MX_RTC_Init(void);
 static void MX_SDMMC1_SD_Init(void);
 /* USER CODE BEGIN PFP */
@@ -221,7 +221,7 @@ void SystemClock_Config(void)
   * @param None
   * @retval None
   */
-static void MX_QUADSPI_Init(void)
+void MX_QUADSPI_Init(void)
 {
 
   /* USER CODE BEGIN QUADSPI_Init 0 */
