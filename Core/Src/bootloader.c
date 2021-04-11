@@ -230,11 +230,16 @@ static void try_to_boot_qspi()
 {
     MX_QUADSPI_EnterMMAP();
     if (valid_vtor(QSPI_BASE)) {
-        const uint32_t * const vtor = (const uint32_t *const) QSPI_BASE;
-        const rcc_init_t *rcc_code = (const rcc_init_t*)(vtor[7]);
+        uint32_t * const vtor = (uint32_t *const) QSPI_BASE;
+        rcc_init_t *rcc_code = (rcc_init_t*)(vtor[7]);
+        uint32_t rcc_code_version = vtor[8];
         rcc_init_t copy = *rcc_code;
         MX_QUADSPI_ExitMMAP();
-        rcc_initialize(&copy);
+        if (rcc_initialize(&copy, rcc_code_version) == RCC_INIT_FAIL) {
+            puts("RCC Config init fail!");
+            NVIC_SystemReset();
+            for(;;);
+        }
         if (LL_RCC_GetQSPIClockFreq(LL_RCC_QSPI_CLKSOURCE) == LL_RCC_PERIPH_FREQUENCY_NO) {
             puts("No QSPI clock... fail!");
             NVIC_SystemReset();

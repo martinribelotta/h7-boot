@@ -14,9 +14,15 @@ typedef struct rcc_init_s {
     RCC_OscInitTypeDef RCC_OscInitStruct;
     RCC_ClkInitTypeDef RCC_ClkInitStruct;
     RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
+    uint32_t flashLatency;
+    uint32_t voltageScale;
+    uint32_t configSupply;
 } rcc_init_t;
 
-extern void rcc_initialize(const rcc_init_t *config);
+extern int rcc_initialize(rcc_init_t *config, uint32_t version);
+
+#define RCC_INIT_OK 0
+#define RCC_INIT_FAIL -1
 
 #ifdef __cplusplus
 }
